@@ -4,29 +4,30 @@ import ChatBar from './components/ChatBar.jsx';
 import Message from './components/Message.jsx';
 import MessageList from './components/MessageList.jsx';
 
+
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
       currentUser: "Anonymous1",
-      currentMessage: "",
-      messages: [{id: 1,
-                  userName: "Bob",
-                  content: "Hey yo"},
-                {id: 2,
-                 userName: "Alice",
-                 content: "I think react is pretty neat"}]
+      messages: []
     }
     this.onEnterContent = this.onEnterContent.bind(this);
     this.onContent = this.onContent.bind(this);
+
   }
+
+  componentDidMount() {
+    this.socket = new WebSocket("ws://localhost:3001")
+  }
+
 
    idGenerator() {
     var S4 = function() {
        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
     };
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-}
+  }
 
   onContent (e) {
   this.state.currentUser = e.target.value
@@ -34,6 +35,7 @@ class App extends Component {
 
   onEnterContent (e) {
     if (e.key === "Enter"){
+      this.socket.send(e.target.value)
       this.setState(
         {messages:
           [...this.state.messages,
@@ -42,8 +44,21 @@ class App extends Component {
           content: e.target.value}]
         }
       )
+      //Note an arrow function does not produce it's own scope function does so using
+      // function here makes this undefined
+      var sendText = () => {
+        var msg = {
+          id: this.idGenerator(),
+          userName: this.state.currentUser,
+          content: e.target.value
+        };
+        // console.log(JSON.stringify(msg));
+        this.socket.send(JSON.stringify(msg))
+      }
+      sendText();
     }
   }
+
 
   render() {
     console.log('app.js');
@@ -60,6 +75,7 @@ class App extends Component {
     );
   }
 }
+
 
 
 
