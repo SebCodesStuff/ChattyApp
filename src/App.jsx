@@ -14,7 +14,6 @@ class App extends Component {
     }
     this.onEnterContent = this.onEnterContent.bind(this);
     this.onContent = this.onContent.bind(this);
-
   }
 
   componentDidMount() {
@@ -22,40 +21,34 @@ class App extends Component {
   }
 
 
-   idGenerator() {
-    var S4 = function() {
-       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-    };
-    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-  }
-
   onContent (e) {
   this.state.currentUser = e.target.value
   }
 
   onEnterContent (e) {
+    // On enter sends message to SocketServer.js
     if (e.key === "Enter"){
-      this.socket.send(e.target.value)
-      this.setState(
-        {messages:
-          [...this.state.messages,
-          {id:this.idGenerator(),
-          userName:this.state.currentUser,
-          content: e.target.value}]
-        }
-      )
-      //Note an arrow function does not produce it's own scope function does so using
-      // function here makes this undefined
-      var sendText = () => {
         var msg = {
-          id: this.idGenerator(),
+          id: "",
           userName: this.state.currentUser,
           content: e.target.value
         };
-        // console.log(JSON.stringify(msg));
-        this.socket.send(JSON.stringify(msg))
-      }
-      sendText();
+      this.socket.send(JSON.stringify(msg))
+      e.target.value = "";
+    }
+
+    this.socket.onmessage = (e) => {
+      console.log(JSON.parse(e.data));
+      var msgFromClient = JSON.parse(e.data);
+      console.log({messages:msgFromClient});
+      this.setState(
+        {messages:
+          [...this.state.messages,
+          {id:msgFromClient.id,
+          userName:msgFromClient.userName,
+          content: msgFromClient.content}]
+        }
+      )
     }
   }
 
