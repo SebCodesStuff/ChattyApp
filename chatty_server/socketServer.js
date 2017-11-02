@@ -23,6 +23,7 @@ wss.on('connection', (ws) => {
   ws.on('message',function incoming(message) {
     var socketMsg = JSON.parse(message)
     socketMsg.id = uuidv5();
+    socketMsg.type = "incomingMessage"
     wss.clients.forEach(function each(client) {
       // Not sure what the below is doin
       // if (client !== ws && client.readyState === SocketServer.OPEN) {

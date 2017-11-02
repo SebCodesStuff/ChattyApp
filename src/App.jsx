@@ -12,8 +12,8 @@ class App extends Component {
       currentUser: "Anonymous1",
       messages: []
     }
-    this.onEnterContent = this.onEnterContent.bind(this);
-    this.onContent = this.onContent.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
+    this.sendName = this.sendName.bind(this);
   }
 
   componentDidMount() {
@@ -21,14 +21,17 @@ class App extends Component {
   }
 
 
-  onContent (e) {
-  this.state.currentUser = e.target.value
+  sendName (e) {
+    if (e.key === "Enter") {
+      this.state.currentUser = e.target.value
+    }
   }
 
-  onEnterContent (e) {
-    // On enter sends message to SocketServer.js
+  sendMessage (e) {
+// On enter sends message to SocketServer.js
     if (e.key === "Enter"){
         var msg = {
+          type: "postMessage",
           id: "",
           userName: this.state.currentUser,
           content: e.target.value
@@ -37,8 +40,9 @@ class App extends Component {
       e.target.value = "";
     }
 
+// SocketServer.js sends back
     this.socket.onmessage = (e) => {
-      console.log(JSON.parse(e.data));
+      console.log("my data",JSON.parse(e.data));
       var msgFromClient = JSON.parse(e.data);
       console.log({messages:msgFromClient});
       this.setState(
@@ -63,7 +67,7 @@ class App extends Component {
 
         <MessageList currentUser = {this.state.currentUser}
           messages = {this.state.messages}/>
-        <ChatBar currentUser = {this.state.currentUser} currentMessage = {this.state.currentMessage} onEnterContent = {this.onEnterContent} onContent = {this.onContent}/>
+        <ChatBar currentUser = {this.state.currentUser} currentMessage = {this.state.currentMessage} sendMessage = {this.sendMessage} sendName = {this.sendName}/>
     </div>
     );
   }
