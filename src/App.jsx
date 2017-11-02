@@ -10,8 +10,9 @@ class App extends Component {
     super(props)
     this.state = {
       formerUser: "Anonymous",
-      currentUser: "",
-      messages: []
+      currentUser: "Anonymous",
+      messages: [],
+      type:""
     }
     this.sendMessage = this.sendMessage.bind(this);
     this.sendName = this.sendName.bind(this);
@@ -26,7 +27,8 @@ class App extends Component {
       switch(msgFromClient.type) {
         case "incomingMessage" : {
           this.setState(
-            {messages:
+            {type:"msg",
+              messages:
               [...this.state.messages,
                 {id:msgFromClient.id,
                   userName:msgFromClient.currentUser,
@@ -38,7 +40,8 @@ class App extends Component {
         case "incomingNotification" : {
           console.log("client"+msgFromClient.currentUser);
           this.setState(
-            { formerUser:msgFromClient.formerUser,
+            { type:"notification",
+              formerUser:msgFromClient.formerUser,
               currentUser:msgFromClient.currentUser,
               messages:
               [...this.state.messages,
@@ -71,14 +74,13 @@ class App extends Component {
     if (e.key === "Enter") {
       var name = {
         type: "postNotification",
-        formerUser: this.state.formerUser,
+        formerUser: this.state.currentUser,
         currentUser: e.target.value,
         content:[]
       }
       this.socket.send(JSON.stringify(name))
     }
   }
-
 
   render() {
     console.log('app.js');
@@ -89,7 +91,7 @@ class App extends Component {
         </nav>
 
         <MessageList currentUser = {this.state.currentUser}
-          messages = {this.state.messages}/>
+          messages = {this.state.messages} type = {this.state.type}/>
         <ChatBar currentUser = {this.state.currentUser} currentMessage = {this.state.currentMessage} sendMessage = {this.sendMessage} sendName = {this.sendName}/>
     </div>
     );
