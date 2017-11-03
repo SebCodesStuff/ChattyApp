@@ -44,8 +44,8 @@ class App extends Component {
           console.log("client"+msgFromClient.currentUser);
           this.setState(
             { type:"notification",
-              formerUser:msgFromClient.formerUser,
-              currentUser:msgFromClient.currentUser,
+              // formerUser:msgFromClient.formerUser,
+              // currentUser:msgFromClient.currentUser,
               messages:
               [...this.state.messages,
               {id:msgFromClient.id,
@@ -80,10 +80,12 @@ class App extends Component {
 
   sendName (e) {
     if (e.key === "Enter") {
+      this.state.formerUser = this.state.currentUser;
+      this.state.currentUser = e.target.value;
       var name = {
         type: "postNotification",
-        formerUser: this.state.currentUser,
-        currentUser: e.target.value,
+        formerUser: this.state.formerUser,
+        currentUser: this.state.currentUser,
         content:[]
       }
       this.socket.send(JSON.stringify(name))
