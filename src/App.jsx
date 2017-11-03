@@ -55,8 +55,10 @@ class App extends Component {
             }
           )
         }
+        break;
         case "user" : {
           this.setState ({users:msgFromClient.num})
+          break;
         }
       }
     }
