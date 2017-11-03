@@ -12,8 +12,6 @@ class App extends Component {
       formerUser: "Anonymous",
       currentUser: "Anonymous",
       messages: [],
-      type:"",
-      users: null,
     }
     this.sendMessage = this.sendMessage.bind(this);
     this.sendName = this.sendName.bind(this);

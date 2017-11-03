@@ -19,18 +19,17 @@ const wss = new SocketServer({server});
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
   console.log('Client connected');
-  var userNum =
-    {num: wss.clients.size,
-     type: 'user'}
-  console.log(userNum);
 
+// Sends a message telling the app how many users are connected
+  var userNum = {
+    num: wss.clients.size,
+    type: 'user'
+  }
   wss.clients.forEach(function each(client) {
-    // Not sure what the below is doin
-    // if (client !== ws && client.readyState === SocketServer.OPEN) {
       client.send(JSON.stringify(userNum));
-    // }
   });
 
+// Logic for identifying what type of message is being received
   ws.on('message',function incoming(message) {
     var socketMsg = JSON.parse(message)
     socketMsg.id = uuidv5();
@@ -43,23 +42,19 @@ wss.on('connection', (ws) => {
         break;
     }
     wss.clients.forEach(function each(client) {
-      // Not sure what the below is doin
-      // if (client !== ws && client.readyState === SocketServer.OPEN) {
         client.send(JSON.stringify(socketMsg));
-      // }
     });
   })
-  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
+
+// Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => {
     console.log('Client disconnected');
-    var userNum =
-      {num: wss.clients.size,
-       type: 'user'}
-       wss.clients.forEach(function each(client) {
-         // Not sure what the below is doin
-         // if (client !== ws && client.readyState === SocketServer.OPEN) {
-           client.send(JSON.stringify(userNum));
-         // }
-       });
-   });
+    userNum = {
+      num: wss.clients.size,
+      type: 'user'
+    }
+    wss.clients.forEach(function each(client) {
+       client.send(JSON.stringify(userNum));
+    });
+  });
 });
