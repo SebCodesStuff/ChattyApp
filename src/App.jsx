@@ -8,8 +8,8 @@ import MessageList from './components/MessageList.jsx';
 class App extends Component {
   constructor(props) {
     super(props)
+//
     this.state = {
-      formerUser: "Anonymous",
       currentUser: "Anonymous",
       messages: [],
     }
@@ -27,33 +27,36 @@ class App extends Component {
       var msgFromClient = JSON.parse(e.data);
       switch(msgFromClient.type) {
         case "incomingMessage" : {
-          this.setState(
-            {type:"msg",
-              messages:
-              [...this.state.messages,
-                {id:msgFromClient.id,
-                  userName:msgFromClient.currentUser,
-                  content: msgFromClient.content}]
-            }
-          )
+          this.setState( {
+            type:"msg",
+            messages:
+            [...this.state.messages,
+              {
+                id:msgFromClient.id,
+                userName:msgFromClient.currentUser,
+                content: msgFromClient.content
+              }
+            ]
+          })
         }
         break;
+
         case "incomingNotification" : {
           console.log("client"+msgFromClient.currentUser);
-          this.setState(
-            { type:"notification",
-              // formerUser:msgFromClient.formerUser,
-              // currentUser:msgFromClient.currentUser,
-              messages:
-              [...this.state.messages,
-              {id:msgFromClient.id,
-              userName:msgFromClient.currentUser,
-              content:`${msgFromClient.formerUser} changed their name to ${msgFromClient.currentUser}`
-              }]
-            }
-          )
+          this.setState({
+            type:"notification",
+            messages:
+            [...this.state.messages,
+              {
+                id:msgFromClient.id,
+                userName:msgFromClient.currentUser,
+                content:`${msgFromClient.formerUser} changed their name to ${msgFromClient.currentUser}`
+              }
+            ]
+          })
         }
         break;
+
         case "user" : {
           this.setState ({users:msgFromClient.num})
           break;
@@ -61,9 +64,11 @@ class App extends Component {
       }
     }
   }
+// End of component did mount
 
+
+// On enter sends message to SocketServer.js
   sendMessage (e) {
-    // On enter sends message to SocketServer.js
     if (e.key === "Enter"){
       var msg = {
         type: "postMessage",
@@ -76,6 +81,7 @@ class App extends Component {
     }
   }
 
+// On enter sends a notification that the users name changed
   sendName (e) {
     if (e.key === "Enter") {
       this.state.formerUser = this.state.currentUser;
@@ -106,8 +112,5 @@ class App extends Component {
     );
   }
 }
-
-
-
 
 export default App;
