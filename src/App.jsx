@@ -56,7 +56,6 @@ class App extends Component {
           )
         }
         case "user" : {
-          console.log("I have ",msgFromClient.num," users");
           this.setState ({users:msgFromClient.num})
         }
       }
@@ -95,7 +94,7 @@ class App extends Component {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
-          <div class="users">{this.state.users} Users Connected</div>
+          <div className="users">{this.state.users} Users Connected</div>
         </nav>
 
         <MessageList currentUser = {this.state.currentUser}
